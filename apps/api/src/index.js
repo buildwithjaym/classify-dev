@@ -16,6 +16,10 @@ app.use("/auth", authRouter);
 app.get("/health", (req, res) => {
     res.json({ ok: true, service: "classify-api" });
 });
+app.use(cors({
+    origin: ["http://localhost:5173"],
+    credentials: true
+}));
 
 const port = process.env.PORT || 3001;
 app.listen(port, () => {
