@@ -1,19 +1,18 @@
 import { createClient } from "@supabase/supabase-js";
 
 export function requireAuth(req, res, next) {
-    const auth = req.headers.authorization || "";
-    const token = auth.startsWith("Bearer ") ? auth.slice(7) : null;
+  const auth = req.headers.authorization || "";
+  const token = auth.startsWith("Bearer ") ? auth.slice(7) : null;
 
-    if (!token) return res.status(401).json({ error: "Missing Bearer token" });
+  if (!token) return res.status(401).json({ error: "Missing Bearer token" });
 
-    // Use anon/publishable would also work for verify, but we can use admin client safely here
-    const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SECRET_KEY, {
-        auth: { persistSession: false },
-    });
+  const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SECRET_KEY, {
+    auth: { persistSession: false },
+  });
 
-    supabase.auth.getUser(token).then(({ data, error }) => {
-        if (error || !data?.user) return res.status(401).json({ error: "Invalid token" });
-        req.user = data.user;
-        next();
-    });
+  supabase.auth.getUser(token).then(({ data, error }) => {
+    if (error || !data?.user) return res.status(401).json({ error: "Invalid token" });
+    req.user = data.user;
+    next();
+  });
 }
